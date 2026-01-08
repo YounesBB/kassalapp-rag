@@ -1,0 +1,16 @@
+.env
+secrets.toml
+__pycache__/
+.venv/
+venv/
+env/
+*.pyc
+*.pyo
+*.pyd
+*.db
+.chroma/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
