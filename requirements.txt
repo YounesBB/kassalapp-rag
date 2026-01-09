@@ -1,5 +1,5 @@
 groq
-chromadb
+pinecone-client
 sentence-transformers
 streamlit
 python-dotenv
