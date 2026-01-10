@@ -61,7 +61,10 @@ def sync():
     index = initialize_pinecone()
     model = SentenceTransformer('all-MiniLM-L6-v2')
     
-    vectors = []
+    batch = []
+    batch_size = 100
+    total_vectors = 0
+    
     for filename in os.listdir(KNOWLEDGE_DIR):
         if filename.endswith(".md") or filename.endswith(".txt"):
             file_path = os.path.join(KNOWLEDGE_DIR, filename)
@@ -76,23 +79,30 @@ def sync():
                 embedding = model.encode(chunk).tolist()
                 
                 # Prepare the record
-                vectors.append({
+                record = {
                     "id": f"{filename}_{i}",
                     "values": embedding,
                     "metadata": {
                         "text": chunk,
                         "source": filename
                     }
-                })
+                }
+                batch.append(record)
+                total_vectors += 1
+                
+                # Stream upload if batch is full
+                if len(batch) >= batch_size:
+                    print(f"Uploading batch of {len(batch)} vectors...")
+                    index.upsert(vectors=batch)
+                    batch = []
 
-    if vectors:
-        print(f"Uploading {len(vectors)} vectors to Pinecone...")
-        # Batch upsert is safer for large datasets
-        batch_size = 100
-        for i in range(0, len(vectors), batch_size):
-            batch = vectors[i:i + batch_size]
-            index.upsert(vectors=batch)
-        print("Sync Complete!")
+    # Final upload for remaining vectors
+    if batch:
+        print(f"Uploading final batch of {len(batch)} vectors...")
+        index.upsert(vectors=batch)
+    
+    if total_vectors > 0:
+        print(f"Sync Complete! Total vectors processed: {total_vectors}")
     else:
         print("No markdown or text files found to sync.")
 
