@@ -1,3 +1,13 @@
+"""
+Pinecone Synchronization Utility for RAG-KASSAL-V3.
+
+This script handles the one-time or periodic synchronization of local knowledge files 
+(Markdown/Text) to the Pinecone cloud vector database. It handles document chunking, 
+embedding generation via SentenceTransformers, and memory-efficient batch upserting.
+
+Usage:
+    python sync_to_pinecone.py
+"""
 import os
 import time
 from dotenv import load_dotenv
@@ -15,7 +25,7 @@ KNOWLEDGE_DIR = "knowledge"
 def initialize_pinecone():
     """Initializes Pinecone and ensures the index exists."""
     if not PINECONE_API_KEY:
-        raise ValueError("PINECONE_API_KEY not found in .env")
+        raise ValueError("PINECONE_API_KEY not found. Please ensure it is set in your environment or .env file.")
 
     pc = Pinecone(api_key=PINECONE_API_KEY)
 
@@ -51,10 +61,14 @@ def chunk_text(text, chunk_size=800):
         if len(current_chunk) + len(p) < chunk_size:
             current_chunk += p + "\n\n"
         else:
-            chunks.append(current_chunk.strip())
+            stripped_chunk = current_chunk.strip()
+            if stripped_chunk:
+                chunks.append(stripped_chunk)
             current_chunk = p + "\n\n"
     if current_chunk:
-        chunks.append(current_chunk.strip())
+        stripped_chunk = current_chunk.strip()
+        if stripped_chunk:
+            chunks.append(stripped_chunk)
     return chunks
 
 
