@@ -2,7 +2,7 @@ import streamlit as st
 import os
 
 # Configuration (MUST be the first Streamlit command)
-st.set_page_config(page_title="Kassalapp Assistant V3", page_icon="🛒", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Kassalapp Assistant", page_icon="🛒", layout="wide", initial_sidebar_state="expanded")
 
 import json
 from dotenv import load_dotenv
