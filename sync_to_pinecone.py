@@ -53,11 +53,26 @@ def initialize_pinecone():
     return pc.Index(PINECONE_INDEX_NAME)
 
 def chunk_text(text, chunk_size=800):
-    """Simple paragraph-based chunking for RAG."""
+    """Simple paragraph-based chunking for RAG, with size safety."""
     paragraphs = text.split("\n\n")
     chunks = []
     current_chunk = ""
     for p in paragraphs:
+        # If the paragraph itself exceeds chunk_size, split it
+        if len(p) > chunk_size:
+            # Flush current chunk first
+            if current_chunk.strip():
+                chunks.append(current_chunk.strip())
+                current_chunk = ""
+            
+            # Split the oversized paragraph into smaller pieces
+            temp_p = p
+            while len(temp_p) > chunk_size:
+                chunks.append(temp_p[:chunk_size].strip())
+                temp_p = temp_p[chunk_size:]
+            current_chunk = temp_p + "\n\n"
+            continue
+
         if len(current_chunk) + len(p) < chunk_size:
             current_chunk += p + "\n\n"
         else:
@@ -65,6 +80,7 @@ def chunk_text(text, chunk_size=800):
             if stripped_chunk:
                 chunks.append(stripped_chunk)
             current_chunk = p + "\n\n"
+
     if current_chunk:
         stripped_chunk = current_chunk.strip()
         if stripped_chunk:
