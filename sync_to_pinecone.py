@@ -100,13 +100,21 @@ def sync():
                 # Stream upload if batch is full
                 if len(batch) >= batch_size:
                     print(f"Uploading batch of {len(batch)} vectors...")
-                    index.upsert(vectors=batch)
+                    try:
+                        index.upsert(vectors=batch)
+                    except Exception as e:
+                        print(f"Error uploading batch: {e}")
+                        raise  # Still raise to stop the sync if something is fundamentally wrong
                     batch = []
 
     # Final upload for remaining vectors
     if batch:
         print(f"Uploading final batch of {len(batch)} vectors...")
-        index.upsert(vectors=batch)
+        try:
+            index.upsert(vectors=batch)
+        except Exception as e:
+            print(f"Error uploading final batch: {e}")
+            raise
     
     if total_vectors > 0:
         print(f"Sync Complete! Total vectors processed: {total_vectors}")
