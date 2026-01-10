@@ -9,7 +9,6 @@ env/
 *.pyd
 *.db
 .chroma/
-chroma_db/
 *.log
 .DS_Store
 Thumbs.db
