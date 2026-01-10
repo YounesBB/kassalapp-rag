@@ -37,9 +37,31 @@ def initialize_pinecone():
             
     return pc.Index(PINECONE_INDEX_NAME)
 
+def chunk_text(text, chunk_size=800):
+    """Simple paragraph-based chunking for RAG."""
+    paragraphs = text.split("\n\n")
+    chunks = []
+    current_chunk = ""
+    for p in paragraphs:
+        if len(current_chunk) + len(p) < chunk_size:
+            current_chunk += p + "\n\n"
+        else:
+            chunks.append(current_chunk.strip())
+            current_chunk = p + "\n\n"
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    return chunks
+
 if __name__ == "__main__":
     try:
+        # TEST 1: Connection
         index = initialize_pinecone()
         print(f"✅ Connected to Pinecone index: {PINECONE_INDEX_NAME}")
+
+        # TEST 2: Chunking (New)
+        test_text = "Paragraph 1\n\nParagraph 2\n\nParagraph 3"
+        chunks = chunk_text(test_text, chunk_size=20)
+        print(f"✅ Chunking logic test: Created {len(chunks)} chunks.")
+        
     except Exception as e:
         print(f"❌ Error: {str(e)}")
