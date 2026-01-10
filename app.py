@@ -74,9 +74,8 @@ DEFAULT_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 
 # Initialize RAG Engine
 if "rag" not in st.session_state:
-    with st.spinner("Initializing Knowledge Base..."):
+    with st.spinner("Connecting to Knowledge Base..."):
         st.session_state.rag = KassalappRAG()
-        st.session_state.rag.index_file("knowledge/expert_guide.md")
 
 # Initialize Groq Client
 if "client" not in st.session_state:
