@@ -58,10 +58,16 @@ if __name__ == "__main__":
         index = initialize_pinecone()
         print(f"✅ Connected to Pinecone index: {PINECONE_INDEX_NAME}")
 
-        # TEST 2: Chunking (New)
+        # TEST 2: Chunking
         test_text = "Paragraph 1\n\nParagraph 2\n\nParagraph 3"
         chunks = chunk_text(test_text, chunk_size=20)
         print(f"✅ Chunking logic test: Created {len(chunks)} chunks.")
+
+        # TEST 3: Embedding
+        print("⏳ Loading embedding model...")
+        model = SentenceTransformer('all-MiniLM-L6-v2')
+        test_embedding = model.encode("How much is milk?").tolist()
+        print(f"✅ Embedding logic test: Vector length is {len(test_embedding)}.")
         
     except Exception as e:
         print(f"❌ Error: {str(e)}")
