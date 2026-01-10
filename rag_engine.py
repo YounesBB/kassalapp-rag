@@ -33,11 +33,15 @@ class KassalappRAG:
         query_vector = self.model.encode(user_query).tolist()
         
         # 2. Query Pinecone
-        results = self.index.query(
-            vector=query_vector,
-            top_k=n_results,
-            include_metadata=True
-        )
+        try:
+            results = self.index.query(
+                vector=query_vector,
+                top_k=n_results,
+                include_metadata=True
+            )
+        except Exception as e:
+            print(f"Error querying Pinecone index '{self.index_name}': {e}")
+            return []
         
         # 3. Extract text from metadata
         relevant_chunks = []
