@@ -1,5 +1,9 @@
 import streamlit as st
 import os
+
+# Configuration (MUST be the first Streamlit command)
+st.set_page_config(page_title="Kassalapp Assistant V3", page_icon="🛒", layout="wide", initial_sidebar_state="expanded")
+
 import json
 from dotenv import load_dotenv
 from groq import Groq
@@ -17,27 +21,55 @@ from rag_engine import KassalappRAG
 # Load environment variables
 load_dotenv(override=True)
 
-# Configuration
-st.set_page_config(
-    page_title="Kassalapp Assistant (Groq Edition)",
-    page_icon="🛒",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-
-# Custom CSS for Premium Look
+# --- CUSTOM CSS (Glassmorphism & Premium UI) ---
 st.markdown("""
 <style>
+    /* Main background - Deep Space Gradient */
     .stApp {
-        background-color: #0e1117;
+        background: linear-gradient(135deg, #0e1117 0%, #1a1c23 100%);
         color: #fafafa;
     }
+
+    /* Force Sidebar Collapse Button Visibility */
+    [data-testid="sidebar-user-features"] + div button,
+    button[kind="headerNoPadding"] {
+        opacity: 1 !important;
+        visibility: visible !important;
+        color: white !important;
+    }
+
+    /* Glassmorphism Chat Containers */
+    [data-testid="stChatMessage"] {
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 15px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Status Badge Styling */
+    .status-badge {
+        display: inline-block;
+        white-space: nowrap;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: rgba(0, 255, 127, 0.1);
+        color: #00ff7f;
+        border: 1px solid rgba(0, 255, 127, 0.2);
+        margin-top: 5px;
+    }
+
     .stTextInput > div > div > input {
         background-color: #262730;
         color: #ffffff;
         border-radius: 10px;
         border: 1px solid #4a4a4a;
     }
+    
     .stButton > button {
         background-color: #ff4b4b;
         color: white;
@@ -46,28 +78,22 @@ st.markdown("""
         border: none;
         transition: all 0.3s ease;
     }
+
     .stButton > button:hover {
         background-color: #ff6b6b;
         transform: scale(1.05);
-    }
-    h1 {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        letter-spacing: -1px;
-    }
-    .chat-message {
-        padding: 1rem;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: flex-start;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # Initialize Session State
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [
+        {
+            "role": "assistant", 
+            "content": "Hi! 👋 I am your **Kassalapp Assistant**. I can help you find grocery prices at stores like Kiwi, Meny, Rema 1000, and more. \n\n**⚡ Tip:** Specific questions (like *'Price of Pepsi Max at Kiwi'*) yield the fastest and most accurate results!"
+        }
+    ]
 
 # Constants
 DEFAULT_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
@@ -156,18 +182,43 @@ def execute_tool(name, args):
 
 # Main UI
 st.title("🛒 Kassalapp Assistant")
-st.caption("Expert AI for Norwegian Groceries")
+st.markdown("""
+**Expert AI for Norwegian Groceries** using the [Kassalapp API](https://kassal.app/api/).
+The AI will help you find information such as prices and products across several Norwegian grocery chains.
+
+💡 **Try asking:**
+* *"What is the price of Coca Cola at Meny?"*
+* *"What is Trumf and how does it work?"*
+* *"Find a Kiwi store in Oslo."*
+
+> ⚡ **Tip:** Specific questions (mentioning a store or product brand) yield better and much faster results!
+""")
 
 # Sidebar
 with st.sidebar:
-    st.title("⚙️ Settings")
+    st.title("🛒 Kassalapp AI")
+    st.markdown("---")
+    
+    # Cloud Status Badge
+    st.markdown('**System Status**<br><span class="status-badge">Pinecone Connected</span>', unsafe_allow_html=True)
+    st.markdown("---")
+    
+    st.info("""
+    **Kassalapp AI Engine**
+    - **RAG**: Pinecone Cloud
+    - **Intelligence**: Groq Llama 3.3
+    - **Real-time Data**: Kassalapp API
+    """)
+    if st.button("Clear Chat"):
+        st.session_state.messages = []
+        st.rerun()
     
     # Model Selection UI
     selected_model = st.selectbox(
         "Select Model",
         ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
         index=0 if DEFAULT_MODEL == "llama-3.3-70b-versatile" else 1,
-        help="llama-3.3 is higher quality, llama-3.1 is faster with higher limits."
+        help="llama-3.3 is higher quality, llama-3.1 is faster with higher daily limits."
     )
     MODEL_NAME = selected_model
     
@@ -176,10 +227,10 @@ with st.sidebar:
     st.markdown("### 💡 Model Switching")
     st.markdown("""
     **Hit limits?** Change model in `.env`:
-    - `llama-3.1-8b-instant` - 500K daily 🚀
-    - `llama-3.2-90b-text-preview` - 500K daily
+    - `llama-3.1-8b-instant`: **500K Tokens / Day** 🚀
+    - `llama-3.2-90b-text-preview`: **500K Tokens / Day**
     
-    ⚠️ Must support tool calling!
+    ⚠️ *Must support tool calling!*
     
     Then restart the app.
     """)
