@@ -15,11 +15,15 @@ class KassalappRAG:
         # We wrap this in a safe check to avoid crashes when running as a standalone script
         try:
             self.api_key = st.secrets.get("PINECONE_API_KEY") or os.getenv("PINECONE_API_KEY")
-            self.index_name = st.secrets.get("PINECONE_INDEX_NAME") or os.getenv("PINECONE_INDEX_NAME", "kassalapp-index")
-        except Exception:
-            # Fallback for local python execution outside of streamlit run
+            self.index_name = st.secrets.get("PINECONE_INDEX_NAME") or os.getenv("PINECONE_INDEX_NAME")
+        except (AttributeError, RuntimeError):
+            # Fallback for local execution outside of Streamlit
             self.api_key = os.getenv("PINECONE_API_KEY")
-            self.index_name = os.getenv("PINECONE_INDEX_NAME", "kassalapp-index")
+            self.index_name = os.getenv("PINECONE_INDEX_NAME")
+            
+        # Ensure consistent default for index name
+        if not self.index_name:
+            self.index_name = "kassalapp-index"
         
         if not self.api_key:
             raise ValueError("PINECONE_API_KEY not found. Please set it as a Secret or Environment Variable.")

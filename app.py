@@ -82,7 +82,7 @@ if "client" not in st.session_state:
     # Universal Secrets: Try Streamlit Secrets (Cloud), then Environment Variables (Local)
     try:
         api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
-    except Exception:
+    except (AttributeError, RuntimeError):
         api_key = os.getenv("GROQ_API_KEY")
         
     if not api_key:
