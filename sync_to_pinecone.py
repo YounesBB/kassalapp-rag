@@ -31,8 +31,13 @@ def initialize_pinecone():
                 region='us-east-1' # free tier region
             )
         )
-        # Wait for index to be ready
+        # Wait for index to be ready with a timeout
+        print(f"Waiting for index '{PINECONE_INDEX_NAME}' to be ready...")
+        max_wait_seconds = 300
+        start_time = time.time()
         while not pc.describe_index(PINECONE_INDEX_NAME).status['ready']:
+            if time.time() - start_time > max_wait_seconds:
+                raise TimeoutError(f"Pinecone index '{PINECONE_INDEX_NAME}' did not become ready within {max_wait_seconds} seconds.")
             time.sleep(1)
             
     return pc.Index(PINECONE_INDEX_NAME)
@@ -51,6 +56,8 @@ def chunk_text(text, chunk_size=800):
     if current_chunk:
         chunks.append(current_chunk.strip())
     return chunks
+
+
 def sync():
     """Reads the knowledge folder and prepares vectors for Pinecone."""
     print(f"Reading folder: {KNOWLEDGE_DIR}...")
