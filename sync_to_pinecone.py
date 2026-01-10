@@ -68,6 +68,26 @@ if __name__ == "__main__":
         model = SentenceTransformer('all-MiniLM-L6-v2')
         test_embedding = model.encode("How much is milk?").tolist()
         print(f"✅ Embedding logic test: Vector length is {len(test_embedding)}.")
+
+        # TEST 4: Batch Upsert Example with dummy data)
+        print("⏳ Testing batch upsert logic...")
+        # Create some dummy vectors for testing upsert
+        dummy_vectors = []
+        for i in range(5): # Create 5 dummy vectors
+            vec_id = f"test_vec_{i}"
+            vec_data = model.encode(f"This is a test sentence number {i}.").tolist()
+            dummy_vectors.append({"id": vec_id, "values": vec_data, "metadata": {"source": "test_data"}})
+
+        if dummy_vectors:
+            print(f"📤 Uploading {len(dummy_vectors)} vectors to Pinecone in batches...")
+            # Batch upsert is safer for large datasets
+            batch_size = 2
+            for i in range(0, len(dummy_vectors), batch_size):
+                batch = dummy_vectors[i:i + batch_size]
+                index.upsert(vectors=batch)
+            print("✅ Batch upsert test complete!")
+        else:
+            print("⚠️ No dummy vectors created for upsert test.")
         
     except Exception as e:
         print(f"❌ Error: {str(e)}")
