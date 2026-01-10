@@ -79,9 +79,14 @@ if "rag" not in st.session_state:
 
 # Initialize Groq Client
 if "client" not in st.session_state:
-    api_key = os.getenv("GROQ_API_KEY")
+    # Universal Secrets: Try Streamlit Secrets (Cloud), then Environment Variables (Local)
+    try:
+        api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
+    except Exception:
+        api_key = os.getenv("GROQ_API_KEY")
+        
     if not api_key:
-        st.error("GROQ_API_KEY not found in environment variables. Please check your .env file.")
+        st.error("GROQ_API_KEY not found. Please set it as a Secret or Environment Variable.")
         st.stop()
     st.session_state.client = Groq(api_key=api_key)
 
