@@ -16,8 +16,8 @@ class KassalappRAG:
         try:
             self.api_key = st.secrets.get("PINECONE_API_KEY") or os.getenv("PINECONE_API_KEY")
             self.index_name = st.secrets.get("PINECONE_INDEX_NAME") or os.getenv("PINECONE_INDEX_NAME")
-        except (AttributeError, RuntimeError):
-            # Fallback for local execution outside of Streamlit
+        except Exception:
+            # Fallback for local execution or if secrets.toml is missing
             self.api_key = os.getenv("PINECONE_API_KEY")
             self.index_name = os.getenv("PINECONE_INDEX_NAME")
             
