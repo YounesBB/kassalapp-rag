@@ -1,5 +1,5 @@
 groq
-pinecone-client
+pinecone
 sentence-transformers
 streamlit
 python-dotenv
