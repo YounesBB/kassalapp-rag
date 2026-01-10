@@ -16,9 +16,18 @@ class KassalappRAG:
         if not self.api_key:
             raise ValueError("PINECONE_API_KEY not found in environment")
 
-        # Initialize Pinecone
+        # Initialize Pinecone and verify index connection
         self.pc = Pinecone(api_key=self.api_key)
-        self.index = self.pc.Index(self.index_name)
+        try:
+            # Check if index exists by listing names (proactive check)
+            if self.index_name not in self.pc.list_indexes().names():
+                raise ValueError(f"Index '{self.index_name}' not found.")
+            self.index = self.pc.Index(self.index_name)
+        except Exception as e:
+            raise RuntimeError(
+                f"Unable to connect to Pinecone index '{self.index_name}'. "
+                "Ensure you have run 'sync_to_pinecone.py' first to initialize the cloud database."
+            ) from e
         
         # Load embedding model locally with timing
         print("Loading embedding model for retrieval...")
