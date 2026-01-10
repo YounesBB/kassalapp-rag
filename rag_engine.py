@@ -1,4 +1,5 @@
 import os
+import time
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
@@ -19,9 +20,12 @@ class KassalappRAG:
         self.pc = Pinecone(api_key=self.api_key)
         self.index = self.pc.Index(self.index_name)
         
-        # Load embedding model locally
+        # Load embedding model locally with timing
         print("Loading embedding model for retrieval...")
+        start_time = time.time()
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        duration = time.time() - start_time
+        print(f"Model loaded in {duration:.2f} seconds.")
 
     def query(self, user_query, n_results=3):
         """Retrieves relevant chunks from Pinecone cloud."""
