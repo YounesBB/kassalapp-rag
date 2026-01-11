@@ -14,3 +14,6 @@ env/
 Thumbs.db
 .vscode/
 .idea/
+chroma_db/
+*.bin
+*.sqlite3
