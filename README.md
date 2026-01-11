@@ -11,7 +11,7 @@ pinned: false
 ---
 -->
 
-# Kassalapp Assistant - RAG-Powered Grocery Shopping Helper
+# 🛒 Kassalapp Assistant - RAG-Powered Grocery Shopping Helper
 
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/younesbb/kassalapp-assistant)
 
