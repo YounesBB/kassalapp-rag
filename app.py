@@ -210,7 +210,8 @@ with st.sidebar:
     - **Real-time Data**: Kassalapp API
     """)
     if st.button("Clear Chat"):
-        st.session_state.messages = []
+        if "messages" in st.session_state:
+            del st.session_state["messages"]
         st.rerun()
     
     # Model Selection UI
