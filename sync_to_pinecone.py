@@ -1,5 +1,5 @@
 """
-Pinecone Synchronization Utility for RAG-KASSAL-V3.
+Pinecone Synchronization Utility for Kassalapp Assistant.
 
 This script handles the one-time or periodic synchronization of local knowledge files 
 (Markdown/Text) to the Pinecone cloud vector database. It handles document chunking, 
@@ -130,21 +130,37 @@ def sync():
                 # Stream upload if batch is full
                 if len(batch) >= batch_size:
                     print(f"Uploading batch of {len(batch)} vectors...")
-                    try:
-                        index.upsert(vectors=batch)
-                    except Exception as e:
-                        print(f"Error uploading batch: {e}")
-                        raise  # Still raise to stop the sync if something is fundamentally wrong
+                    max_retries = 3
+                    for attempt in range(max_retries):
+                        try:
+                            index.upsert(vectors=batch)
+                            break
+                        except Exception as e:
+                            if attempt < max_retries - 1:
+                                wait_time = 2 ** attempt
+                                print(f"Error uploading batch: {e}. Retrying in {wait_time}s...")
+                                time.sleep(wait_time)
+                            else:
+                                print(f"Failed to upload batch after {max_retries} attempts: {e}")
+                                raise
                     batch = []
 
     # Final upload for remaining vectors
     if batch:
         print(f"Uploading final batch of {len(batch)} vectors...")
-        try:
-            index.upsert(vectors=batch)
-        except Exception as e:
-            print(f"Error uploading final batch: {e}")
-            raise
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                index.upsert(vectors=batch)
+                break
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    wait_time = 2 ** attempt
+                    print(f"Error uploading final batch: {e}. Retrying in {wait_time}s...")
+                    time.sleep(wait_time)
+                else:
+                    print(f"Failed to upload final batch after {max_retries} attempts: {e}")
+                    raise
     
     if total_vectors > 0:
         print(f"Sync Complete! Total vectors processed: {total_vectors}")
