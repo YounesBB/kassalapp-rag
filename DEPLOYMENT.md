@@ -40,7 +40,8 @@ Follow these steps to run the assistant on your local machine.
 
 ### 2. Installation
 ```bash
-git clone https://github.com/your-username/kassalapp-rag.git
+# Replace <your-github-username> with your GitHub username or organization
+git clone https://github.com/<your-github-username>/kassalapp-rag.git
 cd kassalapp-rag
 pip install -r requirements.txt
 ```
