@@ -350,3 +350,29 @@ if prompt := st.chat_input("Ask about grocery prices, stores, or loyalty program
             except Exception as e:
                 st.error(f"API Error: {str(e)}")
 
+def upload_batch_with_retry(index, batch, max_retries=3):
+    """Upload a batch of vectors to Pinecone with exponential backoff retry logic."""
+    for attempt in range(max_retries):
+        try:
+            index.upsert(vectors=batch)
+            return
+        except Exception as e:
+            if attempt < max_retries - 1:
+                wait_time = 2 ** attempt
+                print(f"Error uploading batch: {e}. Retrying in {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                print(f"Failed to upload batch after {max_retries} attempts: {e}")
+                raise
+
+                # Upload batch when it reaches the limit
+                if len(batch) >= batch_size:
+                    print(f"Uploading batch of {len(batch)} vectors...")
+                    upload_batch_with_retry(index, batch)
+                    batch = []
+
+    # Final upload for remaining vectors
+    if batch:
+        print(f"Uploading final batch of {len(batch)} vectors...")
+        upload_batch_with_retry(index, batch)
+
