@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 
-# Configuration (MUST be the first Streamlit command)
+# Configuration (MUST be the first Streamlit function call)
 st.set_page_config(page_title="Kassalapp Assistant", page_icon="🛒", layout="wide", initial_sidebar_state="expanded")
 
 import json
