@@ -39,7 +39,7 @@ I built this project to get a **general understanding** of how to develop **RAG 
 
 The spark for using the Kassalapp API came from a [2023 Kode24 article](https://www.kode24.no/artikkel/helge-lager-prisjakt-for-mat-hittil-har-jeg-tjent-400-kroner/170061) about Helge, who built a price tracker for groceries. I thought it was a very cool project, and I’d always wanted to make something with that API. 
 
-When I started learning about RAG and LLMs, I realized this was the perfect opportunity to catch **"two flies in one slap"**. While this solution is not perfect, it works for most cases. It is also worth noting that **AI has been used as a tool** in the development of this project.
+When I started learning about RAG and LLMs, I realized this was the perfect opportunity to **"kill two birds with one stone"**. While this solution is not perfect, it works for most cases. It is also worth noting that **AI has been used as a tool** in the development of this project.
 
 ### ⚠️ Current Status & Limitations
 This is an educational project. While it covers the essentials, you may encounter some limitations:
