@@ -1,3 +1,4 @@
+<!--
 ---
 title: Kassalapp Assistant
 emoji: 🛒
@@ -8,6 +9,7 @@ sdk_version: 1.52.2
 app_file: app.py
 pinned: false
 ---
+-->
 
 # 🛒 Kassalapp Assistant (Cloud Edition)
 
