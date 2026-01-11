@@ -200,7 +200,8 @@ with st.sidebar:
     st.markdown("---")
     
     # Cloud Status Badge
-    st.markdown('**System Status**<br><span class="status-badge">Pinecone Connected</span>', unsafe_allow_html=True)
+    status = "Pinecone Connected" if st.session_state.get('rag_engine') else "✗ Not Connected"
+    st.markdown(f'**System Status**<br><span class="status-badge">{status}</span>', unsafe_allow_html=True)
     st.markdown("---")
     
     st.info("""
