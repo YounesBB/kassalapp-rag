@@ -1,3 +1,4 @@
+<!-- Uncomment the block under before deploying to Hugging Face -->
 <!--
 ---
 title: Kassalapp Assistant
@@ -13,10 +14,12 @@ pinned: false
 
 # 🛒 Kassalapp Assistant - RAG-Powered Grocery Shopping Helper
 
-[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/younesbb/kassalapp-assistant)
+<a href="https://huggingface.co/spaces/younesbb/kassalapp-assistant">
+  <img src="https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-xl-dark.svg" alt="Open in Spaces" height="40">
+</a>
 
 > [!TIP]
-> **🚀 Try it Live**: Click the **Hugging Face** button above to launch the application!
+> **🚀 Try it LIVE**: Click the **Hugging Face** button above to launch the application!
 > *Please note: If the Space is sleeping, it may take up to **30 seconds** to start.*
 
 **An intelligent, Norwegian grocery shopping assistant built with Groq (Llama 3.3) and the [Kassalapp API](https://kassal.app/api/), designed for deployment on Hugging Face Spaces.**
@@ -39,13 +42,26 @@ I built this project to get a **general understanding** of how to develop **RAG 
 
 The spark for using the Kassalapp API came from a [2023 Kode24 article](https://www.kode24.no/artikkel/helge-lager-prisjakt-for-mat-hittil-har-jeg-tjent-400-kroner/170061) about Helge, who built a price tracker for groceries. I thought it was a very cool project, and I’d always wanted to make something with that API. 
 
-When I started learning about RAG and LLMs, I realized this was the perfect opportunity to **"kill two birds with one stone"**. While this solution is not perfect, it works for most cases. It is also worth noting that **AI has been used as a tool** in the development of this project.
+When I started learning about RAG and LLMs, I realized this was the perfect opportunity to **"kill two birds with one stone"**. While this solution is not perfect, it works for common cases. It is also worth noting that **AI has been used as a tool** in the development of this project.
 
 ### ⚠️ Current Status & Limitations
 This is an educational project. While it covers the essentials, you may encounter some limitations:
 *   **Prompt Sensitivity**: Tricky or advanced prompts might occasionally result in sub-optimal answers.
 *   **Data Availability**: The underlying API is relatively simple, and many grocery products are missing price data or specific store information.
-*   **Expansion Potential**: There are many more things that can be done to improve the system, such as fetching more data from the API or expanding the knowledge base further.
+*   **Expansion Potential**: There are many more things that can be done to improve the system, such as fetching more data from the API (such as allergies, nutrition, etc.) or expanding the knowledge base further.
+
+## 🏗️ Technology Choices & Trade-offs
+
+This project evolved significantly during development. I made specific decisions to balance performance, scalability, and free-tier accessibility:
+
+*   **The Transition from Gemini File Search to Groq + Pinecone**
+    *   My first iteration used **Gemini's File Search (RAG-as-a-Service)**. It was an excellent "first run" because it handled chunking, embedding, and indexing automatically. However, I eventually migrated away because:
+        1.  **Rate Limits**: The Gemini free tier had strict requests-per-day limits that I quickly exhausted. **Groq** (hosting **Llama 3.3 70B**) offered a much higher volume of requests per day for a good high-reasoning model.
+        2.  **Cost & Lock-in**: While Gemini File Search simplifies the stack, embedding generation isn't entirely free, and it locks the project into the Google ecosystem. Moving to **Pinecone** and local embeddings gave me more control and portability.
+*   **Why `all-MiniLM-L6-v2` for Embeddings?**
+    *   This model is incredibly efficient for local development. It is tiny (approx. **23MB**), meaning it loads almost instantly and runs fast on a standard CPU. This was important for keeping the synchronization script lightweight and keeping the project compatible with free-tier cloud hosting. More importantly, it was **more than enough** for the scope and complexity of this specific knowledge base.
+*   **Why Streamlit for the UI?**
+    *   I chose **Streamlit** because it allows for rapid development of data-focused AI applications using pure Python. It handled the complex state management of a chat interface and tool-calling status badges with minimal boilerplate, while making deployment to Hugging Face or Streamlit Cloud seamless.
 
 ---
 
