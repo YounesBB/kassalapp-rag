@@ -162,13 +162,34 @@ def execute_tool(name, args):
             except (ValueError, TypeError):
                 args["size"] = 10  # Default fallback
         
-        # Ensure Store code is correct for API
+        # Normalize store codes to match Kassalapp API expectations
         if "store" in args and args["store"]:
-            s = args["store"].upper()
-            if s == "MENY": s = "MENY_NO"
-            if s == "SPAR": s = "SPAR_NO"
-            if s == "REMA": s = "REMA_1000"
-            args["store"] = s
+            # Comprehensive store mapping for major Norwegian chains
+            STORE_MAPPING = {
+                # Major chains
+                "KIWI": "KIWI",
+                "REMA": "REMA_1000",
+                "REMA 1000": "REMA_1000",
+                "MENY": "MENY_NO",
+                "SPAR": "SPAR_NO",
+                "BUNNPRIS": "BUNNPRIS",
+                "JOKER": "JOKER_NO",
+                
+                # Coop variants
+                "COOP": "COOP_NO",
+                "COOP MEGA": "COOP_MEGA",
+                "COOP EXTRA": "COOP_EXTRA",
+                "COOP OBS": "COOP_OBS",
+                "COOP PRIX": "COOP_PRIX",
+                "COOP MARKED": "COOP_MARKED",
+                "MATKROKEN": "MATKROKEN",
+                
+                # Online
+                "ODA": "ODA_NO",
+            }
+            
+            store_input = args["store"].upper().strip()
+            args["store"] = STORE_MAPPING.get(store_input, store_input)
         return search_products(**args)
     elif name == "search_physical_stores":
         # Type coercion for size parameter
