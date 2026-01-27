@@ -182,7 +182,6 @@ def execute_tool(name, args):
                 "COOP OBS": "COOP_OBS",
                 "COOP PRIX": "COOP_PRIX",
                 "COOP MARKED": "COOP_MARKED",
-                "MATKROKEN": "MATKROKEN",
                 
                 # Online
                 "ODA": "ODA_NO",
@@ -209,10 +208,12 @@ The AI will help you find information such as prices and products across several
 
 💡 **Try asking:**
 * *"What is the price of Coca Cola at Meny?"*
+* *"Hva koster melk på Kiwi?"* (What does milk cost at Kiwi?)
 * *"What is Trumf and how does it work?"*
 * *"Find a Kiwi store in Oslo."*
 
-> ⚡ **Tip:** Specific questions (mentioning a store or product brand) yield better and much faster results!
+ ⚡ **Tip:** Use **Norwegian product names** (e.g., "melk" instead of "milk") for Nowegian named products for better results.  
+ ⚡ **Tip:** Specific questions (mentioning a store or product brand) yield faster and more accurate answers.
 """)
 
 # Sidebar
