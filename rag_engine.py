@@ -48,6 +48,8 @@ class KassalappRAG:
         duration = time.time() - start_time
         print(f"Model loaded in {duration:.2f} seconds.")
 
+    # Top-k retrieval chunks value can be experimented with 
+    # for larger values Re-ranking strategy should be considered
     def query(self, user_query, n_results=3):
         """Retrieves relevant chunks from Pinecone cloud."""
         # 1. Generate embedding for the query
